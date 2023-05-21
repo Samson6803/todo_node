@@ -1,4 +1,4 @@
-import query from "../database/database";
+import userRepo from "../repositories/UserRepository";
 import bcrypt from "bcrypt";
 
 export interface registerDTO {
@@ -9,10 +9,10 @@ export interface registerDTO {
 
 const UserService = {
   register: async (registerDTO: registerDTO) => {
-    const queryResult = await query.getUser(registerDTO.email);
-    if (queryResult.count != 0) throw new Error("Email is occupied");
+    const user = await userRepo.getUser(registerDTO.email);
+    if (user != null) throw new Error("Email is occupied");
     const hashedPassword = await bcrypt.hash(registerDTO.password, 10);
-    return query.addUser({
+    return userRepo.addUser({
       name: registerDTO.name,
       email: registerDTO.email,
       password: hashedPassword,
