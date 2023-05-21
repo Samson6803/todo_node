@@ -7,8 +7,9 @@ interface User {
 }
 const UserRepository = {
   addUser: async (user: User) => {
-    const result = db`INSERT INTO users(name, email, password) VALUES ${user.name}, ${user.email}, ${user.password}
-                RETURNING id, email`;
+    const result =
+      await db`INSERT INTO users(name, email, password) VALUES (${user.name}, ${user.email}, ${user.password})
+                RETURNING name, email`;
     return result;
   },
   getUser: async (email: string) => {

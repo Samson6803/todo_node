@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import UserService, { registerDTO } from "../services/UserService";
-import JOI from "joi";
+import UserValidator from "../utils/UserValidator";
 
 const UserController = {
   register: async (request: Request, response: Response) => {
@@ -10,28 +10,24 @@ const UserController = {
       password: request.body.password,
     };
 
-    const schema = JOI.object({
-      email: JOI.string().email({ minDomainSegments: 2 }),
-      name: JOI.string().pattern(/^[a-zA-Z]+$/),
-      password: JOI.string().min(5),
-    });
-    const schemaResult = schema.validate(registerUserDTO);
-    if (schemaResult.error) {
+    const validationResult = UserValidator.validate(registerUserDTO);
+    if (!validationResult) {
       return response.status(400).json({
-        error: schemaResult.error,
+        error: "Incorrect user data, validation didn't succeed",
       });
     }
 
     try {
       const user = await UserService.register(registerUserDTO);
-      return response.json({
+      return response.status(200).json({
         user,
       });
     } catch (e: unknown) {
       if (e instanceof Error) {
-        console.log(e.message);
+        return response.status(400).json({
+          error: e.message,
+        });
       }
-      return response.status(500).json({ error: true });
     }
   },
 };
