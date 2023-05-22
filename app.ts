@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express, { json, urlencoded } from "express";
+import express, { json, request, response, urlencoded } from "express";
 import UserController from "./controllers/UserController";
 import session from "express-session";
 import cookieParser from "cookie-parser";
@@ -35,6 +35,20 @@ app.use((req, res, next) => {
     next(new Error("Unauthorized"));
   }
   next();
+});
+
+app.get("/api/logout", async (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      res.status(400).json({
+        error: "Cannot log out",
+      });
+    } else {
+      res.status(200).json({
+        message: "Logged out correctly",
+      });
+    }
+  });
 });
 
 app.listen(process.env.APP_PORT!, () => {

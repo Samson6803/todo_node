@@ -48,7 +48,8 @@ const UserController = {
       const user = await UserService.login(loginUserDTO);
       request.session.userId = user.id;
       return response.status(200).json({
-        user,
+        name: user.name,
+        email: user.email,
       });
     } catch (e: unknown) {
       if (e instanceof Error) {
