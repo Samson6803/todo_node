@@ -59,6 +59,19 @@ const UserController = {
       }
     }
   },
+  logout: (req: Request, res: Response) => {
+    req.session.destroy((err) => {
+      if (err) {
+        res.status(400).json({
+          error: "Cannot log out",
+        });
+      } else {
+        res.status(200).json({
+          message: "Logged out correctly",
+        });
+      }
+    });
+  },
 };
 
 export default UserController;
