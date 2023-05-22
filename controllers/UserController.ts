@@ -72,6 +72,11 @@ const UserController = {
       }
     });
   },
+  me: (req: Request, res: Response) => {
+    res.status(200).json({
+      userId: req.session.userId,
+    });
+  },
 };
 
 export default UserController;
