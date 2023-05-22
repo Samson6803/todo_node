@@ -12,6 +12,7 @@
     "express-session": "^1.17.3",
     "joi": "^17.9.2",
     "postgres": "^3.3.4",
+    "redis": "^4.6.6",
     "ts-node": "^10.9.1"
   },
   "scripts": {

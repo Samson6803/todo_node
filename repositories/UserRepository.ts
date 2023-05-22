@@ -1,6 +1,7 @@
 import db from "../config/dbConnection";
 
 interface User {
+  id: string;
   email: string;
   name: string;
   password: string;
@@ -14,8 +15,13 @@ const UserRepository = {
   },
   getUser: async (email: string) => {
     const user = await db`SELECT * FROM users WHERE email = ${email}`;
-    if (user.count === 1) return user;
-    return null;
+    if (user.length === 0) return null;
+    return {
+      id: user[0]?.id,
+      email: user[0]?.email,
+      name: user[0]?.name,
+      password: user[0]?.password,
+    };
   },
 };
 

@@ -7,6 +7,11 @@ export interface registerDTO {
   password: string;
 }
 
+export interface loginDTO {
+  email: string;
+  password: string;
+}
+
 const UserService = {
   register: async (registerDTO: registerDTO) => {
     const user = await userRepo.getUser(registerDTO.email);
@@ -17,6 +22,16 @@ const UserService = {
       email: registerDTO.email,
       password: hashedPassword,
     });
+  },
+  login: async (loginDTO: loginDTO) => {
+    const user = await userRepo.getUser(loginDTO.email);
+    if (user == null) throw new Error("There is no such user");
+    const compareResult = await bcrypt.compare(
+      loginDTO.password,
+      user.password!
+    );
+    if (!compareResult) throw new Error("Incorrect password or email");
+    return user;
   },
 };
 

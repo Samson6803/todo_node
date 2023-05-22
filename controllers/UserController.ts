@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import UserService, { registerDTO } from "../services/UserService";
+import UserService, { registerDTO, loginDTO } from "../services/UserService";
 import UserValidator from "../utils/UserValidator";
 
 const UserController = {
@@ -10,7 +10,7 @@ const UserController = {
       password: request.body.password,
     };
 
-    const validationResult = UserValidator.validate(registerUserDTO);
+    const validationResult = UserValidator.validateRegister(registerUserDTO);
     if (!validationResult) {
       return response.status(400).json({
         error: "Incorrect user data, validation didn't succeed",
@@ -19,6 +19,34 @@ const UserController = {
 
     try {
       const user = await UserService.register(registerUserDTO);
+      return response.status(200).json({
+        user,
+      });
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        return response.status(400).json({
+          error: e.message,
+        });
+      }
+    }
+  },
+
+  login: async (request: Request, response: Response) => {
+    const loginUserDTO: loginDTO = {
+      email: request.body.email,
+      password: request.body.password,
+    };
+
+    const validationResult = UserValidator.validateLogin(loginUserDTO);
+    if (!validationResult) {
+      return response.status(400).json({
+        error: "Incorrect user data, validation didn't succeed",
+      });
+    }
+
+    try {
+      const user = await UserService.login(loginUserDTO);
+      request.session.userId = user.id;
       return response.status(200).json({
         user,
       });

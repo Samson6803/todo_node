@@ -1,20 +1,32 @@
 import JOI from "joi";
-import { registerDTO } from "../services/UserService";
+import { registerDTO, loginDTO } from "../services/UserService";
+
+const emailJOI = JOI.string().email({ minDomainSegments: 2 }).required();
+const nameJOI = JOI.string()
+  .pattern(/^[a-zA-Z]+$/)
+  .required();
+const passwordJOI = JOI.string().min(5).required();
 
 const registerDTOSchema = JOI.object({
-  email: JOI.string().email({ minDomainSegments: 2 }).required(),
-  name: JOI.string()
-    .pattern(/^[a-zA-Z]+$/)
-    .required(),
-  password: JOI.string().min(5).required(),
+  email: emailJOI,
+  name: nameJOI,
+  password: passwordJOI,
+});
+
+const loginDTOSchema = JOI.object({
+  email: emailJOI,
+  password: passwordJOI,
 });
 
 const UserValidator = {
-  validate: (registerUserDTO: registerDTO) => {
+  validateRegister: (registerUserDTO: registerDTO) => {
     const validationResult = registerDTOSchema.validate(registerUserDTO);
-    if (validationResult.error) {
-      return false;
-    }
+    if (validationResult.error) return false;
+    return true;
+  },
+  validateLogin: (loginUserDTO: loginDTO) => {
+    const validationResult = loginDTOSchema.validate(loginUserDTO);
+    if (validationResult.error) return false;
     return true;
   },
 };
