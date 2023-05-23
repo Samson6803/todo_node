@@ -1,4 +1,5 @@
 import RedisStore from "connect-redis";
+import { RequestHandler } from "express-serve-static-core";
 import session from "express-session";
 import { createClient } from "redis";
 

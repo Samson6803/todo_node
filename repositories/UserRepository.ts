@@ -7,10 +7,16 @@ interface User {
 }
 const UserRepository = {
   addUser: async (user: User) => {
-    const result =
-      await db`INSERT INTO users(name, email, password) VALUES (${user.name}, ${user.email}, ${user.password})
+    try {
+      const result =
+        await db`INSERT INTO tasks(name, email, password) VALUES (${user.name}, ${user.email}, ${user.password})
                 RETURNING name, email`;
-    return result;
+      return result;
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e.message);
+      }
+    }
   },
   getUser: async (email: string) => {
     const user = await db`SELECT * FROM users WHERE email = ${email}`;
